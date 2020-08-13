@@ -1,0 +1,1155 @@
+
+<html>
+    <head>
+    <title>Unit Converter</title>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="https://static.codehs.com/gulp/2ce2a83221bf104ba820843f8edbdfffc4754a15/chs-js-lib/chs.js"></script>
+    
+    <style>
+    body {
+        background-color: #000000;
+        margin: 0;
+    }
+
+    canvas {
+        display: inline-block;
+        vertical-align: top;
+    }
+    
+    pre {
+        display: inline-block;
+        background-color: #000000;
+    }
+    </style>
+    
+    </head>
+    
+    <canvas
+    class="codehs-editor-canvas"></canvas>
+
+    <script>
+    window.onload = function() {
+
+    //window size
+    setSize($(document).width(), $(document).height());
+    
+    //contants
+    var CONSTANTS = {
+        length: {
+            name: "Length",
+            defaults: {
+                var1: "in",
+                var2: "cm",
+            },
+            conversions: {
+                //SI= meter
+                nm: {
+                    plural: "nanometers",
+                    singular: "nanometer",
+                    si: 0.000000001
+                },
+                nμ: {
+                    plural: "micron",
+                    singular: "microns",
+                    si: 0.000001
+                },
+                mm: {
+                    plural: "millimeters",
+                    singular: "millimeter",
+                    si: 0.001
+                },
+                cm: {
+                    plural: "centimeters",
+                    singular: "centimeter",
+                    si: 0.01
+                },
+                m: {
+                    plural: "meters",
+                    singular: "meter",
+                    si: 1
+                },
+                km: {
+                    plural: "kilometers",
+                    singular: "kilometer",
+                    si: 1000
+                },
+                in: {
+                    plural: "inches",
+                    singular: "inch",
+                    si: 0.0254
+                },
+                ft: {
+                    plural: "feet",
+                    singular: "foot",
+                    si: 0.3048
+                },
+                yd: {
+                    plural: "yards",
+                    singular: "yard",
+                    si: 0.9144
+                },
+                mi: {
+                    plural: "miles",
+                    singular: "mile",
+                    si: 1609.344
+                },
+                nmi: {
+                    plural: "nautical miles",
+                    singular: "nautical mile",
+                    si: 1852
+                }
+            }
+        },
+        weightAndMass: {
+            name: "Weight and Mass",
+            defaults: {
+                var1: "kg",
+                var2: "lb",
+            },
+            conversions: {
+                //SI = kilogram
+                ct: {
+                    plural: "carets",
+                    singular: "caret",
+                    si: 0.0002
+                },
+                mg: {
+                    plural: "milligrams",
+                    singular: "milligram",
+                    si: 0.000001
+                },
+                cg: {
+                    plural: "centigrams",
+                    singular: "centigram",
+                    si: 0.00001
+                },
+                dg: {
+                    plural: "decigrams",
+                    singular: "decigram",
+                    si: 0.0001
+                },
+                g: {
+                    plural: "grams",
+                    singular: "gram",
+                    si: 0.001
+                },
+                dag: {
+                    plural: "dekagrams",
+                    singular: "dekagram",
+                    si: 0.01
+                },
+                hg: {
+                    plural: "hectograms",
+                    singular: "hectogram",
+                    si: 0.1
+                },
+                kg: {
+                    plural: "kilograms",
+                    singular: "kilogram",
+                    si: 1
+                },
+                t: {
+                    plural: "metric tonnes",
+                    singular: "metric tonne",
+                    si: 1000
+                },
+                oz: {
+                    plural: "ounces",
+                    singular: "ounce",
+                    si: 0.02835
+                },
+                lb: {
+                    plural: "pounds",
+                    singular: "pound",
+                    si: 0.453592
+                },
+                st: {
+                    plural: "stone",
+                    singular: "stone",
+                    si: 6.350293
+                },
+                U5ton: {
+                    plural: "short tons",
+                    singular: "short ton",
+                    si: 907.1847
+                },
+                UKton: {
+                    plural: "long tons",
+                    singular : "long ton",
+                    si : 1016.047
+                }
+            }
+        },
+        volume: {
+            name: "Volume",
+                defaults : {
+                    var1: "ml",
+                    var2 : "UStsp",
+                },
+            conversions: {
+                //SI= cubic meter
+                ml: {
+                    plural: "milliliters",
+                    singular : "milliliter",
+                    si : 0.000001
+                },
+                cm3: {
+                    plural: "cubic centimeters",
+                    singular : "cubic centimeter",
+                    si : 0.000001
+                },
+                l: {
+                    plural: "liters",
+                    singular : "liter",
+                    si : 0.001
+                },
+                m3: {
+                    plural: "cubic meters",
+                    singular : "cubic meter",
+                    si : 1
+                },
+                UStsp: {
+                    plural: "US teaspoons",
+                    singular : "US teaspoon",
+                    si : 0.000005
+                },
+                UStbsp: {
+                    plural: "US tablespoons",
+                    singular : "US tablespoon",
+                    si : 0.000015
+                },
+                USfloz: {
+                    plural: "US fluid ounces",
+                    singular : "US fluid ounce",
+                    si : 0.00003
+                },
+                use: {
+                    plural: "US cups",
+                    singular : "US cup",
+                    si : 0.000237
+                },
+                USpt: {
+                    plural: "US pints",
+                    singular : "US pint",
+                    si : 0.000473
+                },
+                USqt: {
+                    plural: "US quarts",
+                    singular : "US quart",
+                    si : 0.000946
+                },
+                USgal: {
+                    plural: "US gallon",
+                    singular : "US gallon",
+                    si : 0.003785
+                },
+                in3: {
+                    plural: "cubic inches",
+                    singular : "cubic inch",
+                    si : 0.000016
+                },
+                ft3: {
+                    plural: "cubic feet",
+                    singular : "cubic foot",
+                    si : 0.028317
+                },
+                yd3: {
+                    plural: "cubic yards",
+                    singular : "cubic yard",
+                    si : 0.764555
+                },
+                UKtsp: {
+                    plural: "UK teaspoons",
+                    singular : "UK teaspoon",
+                    si : 0.000006
+                },
+                UKtbsp: {
+                    plural: "UK tablespoons",
+                    singular : "UK tablespoon",
+                    si : 0.000018
+                },
+                UKfloz: {
+                    plural: "UK fluid ounces",
+                    singular : "UK fluid ounce",
+                    si : 0.000028
+                },
+                UKpt: {
+                    plural: "UK pints",
+                    singular : "UK pint",
+                    si : 0.000568
+                },
+                UKqt: {
+                    plural: "UK quarts",
+                    singular : "UK quart",
+                    si : 0.001137
+                },
+                UKgal: {
+                    plural: "UK gallons",
+                    singular : "UK gallons",
+                    si : 0.004546
+                }
+            }
+        },
+        energy: {
+            name: "Energy",
+                defaults : {
+                    var1: "J",
+                    var2 : "C",
+                },
+            conversions: {
+                //SI= joule
+                eV: {
+                    plural: "electron volts",
+                    singular : "electron volt",
+                    si : 0.0000000000000000001602177
+                },
+                J: {
+                    plural: "joules",
+                    singular : "joule",
+                    si : 1
+                },
+                kJ: {
+                    plural: "kilojoules",
+                    singular : "kilojoule",
+                    si : 1000
+                },
+                kC: {
+                    plural: "kilocalories",
+                    singular : "kilocalorie",
+                    si : 4.184
+                },
+                C: {
+                    
+                    plural: "calories",
+                    singular : "calories",
+                    si : 4184
+                },
+                ftlb: {
+                    plural: "foot-pounds",
+                    singular : "foot-pound",
+                    si : 1.355818
+                },
+                btu: {
+                    plural: "British thermal units",
+                    singular : "British thermal unit",
+                    si : 1055.056
+                }
+            }
+        },
+        area: {
+            name: "Area",
+                defaults : {
+                    var1: "m2",
+                    var2 : "ft2",
+            },
+            conversions: {
+                //SI= m2
+                mm2: {
+                    plural: "square millimeters",
+                    singular : "square millimeter",
+                    si : 0.000001
+                },
+                cm2: {
+                    plural: "square centimeters",
+                    singular : "square centimeter",
+                    si : 0.0001
+                },
+                m2: {
+                    plural: "square meters",
+                    singular: "square meter",
+                    si : 1
+                },
+                ha: {
+                    plural: "hectares",
+                    singular : "hectare",
+                    si : 10000
+                },
+                km2: {
+                    plural: "square kilometers",
+                    singular : "square kilometer",
+                    si : 1000000
+                },
+                in2: {
+                    plural: "square inches",
+                    singular : "square inch",
+                    si : 0.000645
+                },
+                ft2: {
+                    plural: "square feet",
+                    singular : "square foot",
+                    si : 0.092903
+                },
+                yd2: {
+                    plural: "square yards",
+                    singular : "square yard",
+                    si : 0.836127
+                },
+                ac: {
+                    plural: "acre",
+                    singular : "acre",
+                    si : 4046.856
+                },
+                mi2: {
+                    plural: "square miles",
+                    singular : "square mile",
+                    si : 2589998
+                }
+            }
+        },
+        speed: {
+            name: "Speed",
+            defaults : {
+                var1: "kmps",
+                var2 : "mph",
+            },
+            conversions : {
+                //SI= mps
+                cmps: {
+                    plural: "centimeters per second",
+                        singular : "centimeter per second",
+                            si : 0.01
+                },
+                mps: {
+                    plural: "meters per second",
+                        singular : "meter per second",
+                si: 1
+                },
+                kmps: {
+                    plural: "kilometers per second",
+                        singular : "kilometer per second",
+                            si : 0.2777777777
+                },
+                ftps: {
+                    plural: "feet per second",
+                        singular : "foot per second",
+                            si : 0.3048
+                },
+                mph: {
+                    plural: "miles per hour",
+                        singular : "mile per hour",
+                            si : 0.447
+                },
+                kt: {
+                    plural: "knots",
+                        singular : "knot",
+                            si : 0.5144
+                },
+                Mach: {
+                    plural: "(Mach number)",
+                singular : "(Mach number)",
+                    si : 340.3
+                }
+            }
+        },
+        time: {
+            name: "Time",
+                defaults : {
+                    var1: "min",
+                    var2 : "hr",
+            },
+            conversions: {
+                //SI= s
+                μs: {
+                    plural: "microseconds",
+                    singular : "microsecond",
+                    si : 0.000001
+                },
+                ms: {
+                    plural: "milliseconds",
+                    singular : "millisecond",
+                    si : 0.001
+                },
+                s: {
+                    plural: "seconds",
+                    singular : "second",
+                    si : 1
+                },
+                min: {
+                    plural: "minutes",
+                    singular : "minute",
+                    si : 60
+                },
+                hr: {
+                    plural: "hours",
+                    singular : "hour",
+                    si : 3600
+                },
+                d: {
+                    plural: "days",
+                    singular : "day",
+                    si : 86400
+                },
+                wk: {
+                    plural: "weeks",
+                    singular : "weeks",
+                    si : 604800
+                },
+                yr: {
+                    plural: "years",
+                    singular : "year",
+                    si : 31557600
+                }
+            }
+        },
+        power: {
+            name: "Power",
+                defaults : {
+                    var1: "kW",
+                    var2 : "UShp",
+            },
+            conversions: {
+                //SI= W
+                W: {
+                    plural: "watts",
+                    singular : "watt",
+                    si : 1
+                },
+                kW: {
+                    plural: "kilowatts",
+                    singular : "kilowatt",
+                    si : 1000
+                },
+                UShp: {
+                    plural: "horsepower",
+                    singular : "horsepower",
+                    si : 745.6999
+                },
+                ftpm: {
+                    plural: "foot-pounds/ min",
+                    singular : "foot-pound/ min",
+                    si : 0.022597
+                },
+                btupm: {
+                    plural: "BTU/ min",
+                    singular : "BTUs / min",
+                    si : 17.58426
+                }
+            }
+        },
+        data: {
+            name: "Data",
+                defaults : {
+                var1: "MB",
+                var2 : "GB",
+            },
+            conversions: {
+                //SI= Mb
+                b: {
+                    plural: "bits",
+                    singular : "bit",
+                    si : 0.000001
+                },
+                B: {
+                    plural: "bytes",
+                    singular : "byte",
+                    si : 0.000008
+                },
+                Kb: {
+                    plural: "kilobits",
+                    singular : "kilobit",
+                    si : 0.001
+                },	
+                Ki: {
+                    plural: "kibibits",
+                    singular : "kibibit",
+                    si : 0.001024
+                },
+                KB: {
+                    plural: "kilobytes",
+                    singular : "kilobyte",
+                    si : 0.008
+                },
+                KiB: {
+                    plural: "kibibytes",
+                    singular : "kibibyte",
+                    si : 0.008192
+                },
+                Mb: {
+                    plural: "megabits",
+                    singular : "megabit",
+                    si : 1
+                },
+                Mi: {
+                    plural: "mebibits",
+                    singular : "mebibit",
+                    si : 1.048576
+                },
+                MB: {
+                    plural: "megabyte",
+                    singular : "megabyte",
+                    si : 8
+                },
+                MiB: {
+                    plural: "mebibytes",
+                    singular : "mebibyte",
+                    si : 8.388608
+                },
+                Gb: {
+                    plural: "gigabits",
+                    singular : "gigabit",
+                    si : 1000
+                },
+                Gi: {
+                    plural: "gibibits",
+                    singular : "gibibit",
+                    si : 1073.742
+                },
+                GB: {
+                    plural: "gigabytes",
+                    singular : "gigabyte",
+                    si : 8000
+                },
+                GiB: {
+                    plural: "gibibytes",
+                    singular : "gibibyte",
+                    si : 8589.935
+                },
+                Tb: {
+                    plural: "terabits",
+                    singular : "terabit",
+                    si : 1000000
+                },
+                Ti: {
+                    plural: "tebibits",
+                    singular : "tebibit",
+                    si : 1099512
+                },
+                TB: {
+                    plural: "terabytes",
+                    singular : "terabyte",
+                    si : 8000000
+                },
+                TiB: {
+                    plural: "tibibytes",
+                    singular : "tibibyte",
+                    si : 8796093
+                },
+                Pb: {
+                    plural: "petabits",
+                    singular : "petabit",
+                    si : 1000000000
+                },
+                Pi: {
+                    plural: "pebibits",
+                    singular : "pebibit",
+                    si : 1125899907
+                },
+                PB: {
+                    plural: "petabytes",
+                    singular: "petabyte",
+                    si : 8000000000
+                },
+                PiB: {
+                    plural: "pebibytes",
+                    singular : "pebibyte",
+                    si : 9007199255
+                },
+                Eb: {
+                    plural: "exabits",
+                    singular : "exabit",
+                    si : 1000000000000
+                },
+                Ei: {
+                    plural: "exbibits",
+                    singular : "exbibit",
+                    si : 1152921504607
+                },
+                EB: {
+                    plural: "exabytes",
+                    singular : "exabyte",
+                    si : 8000000000000
+                },
+                EiB: {
+                    plural: "exbibytes",
+                    singular : "exbibyte",
+                    si : 9223372036855
+                },
+                Zb: {
+                    plural: "zetabits",
+                    singular : "zetabit",
+                    si : 1000000000000000
+                },
+                Zi: {
+                    plural: "zebibits",
+                    singular : "zebibit",
+                    si : 1180591620717000
+                },
+                ZB: {
+                    plural: "zetabytes",
+                    singular : "zetabyte",
+                    si : 8000000000000000
+                },
+                ZiB: {
+                    plural: "zebibytes",
+                    singular: "zebibyte",
+                    si: 9444732965739000
+                },
+                Yb: {
+                    plural: "yottabits",
+                    singular: "yottabit",
+                    si: 1000000000000000000
+                },
+                Yi: {
+                    plural: "yobibits",
+                    singular: "yobibit",
+                    si: 1208925819615000000
+                },
+                YB: {
+                    plural: "yottabytes",
+                    singular : "yottabyte",
+                    si : 8000000000000000000
+                },
+                YiB: {
+                    plural: "yobibytes",
+                    singular : "yobibyte",
+                    si : 9671406556917000000
+                }
+            }
+        },
+        pressure: {
+            name: "Pressure",
+            defaults: {
+                var1: "atm",
+                var2: "Pa",
+            },
+            conversions: {
+                //SI= W
+                atm: {
+                    plural: "atmospheres",
+                    singular: "atmosphere",
+                    si: 101325
+                },
+                bar: {
+                    plural: "bars",
+                    singular: "bar",
+                    si: 100000
+                },
+                kPa: {
+                    plural: "kilopascals",
+                    singular: "kilopascal",
+                    si: 1000
+                },
+                mmHg: {
+                    plural: "millimeters of mercury",
+                    singular: "millimeters of mercury",
+                    si: 133.3
+                },
+                Pa: {
+                    plural: "pascals",
+                    singular: "pascal",
+                    si: 1
+                },
+                lbpin2: {
+                    plural: "pound per square inch",
+                    singular : "pounds per square inch",
+                    si : 6894.757
+                }			
+            }
+        },
+        angle: {
+            name: "Angle",
+            defaults: {
+                var1: "rad",
+                var2 : "deg",
+            },
+            conversions: {
+                //SI = rad
+                rad: {
+                    plural: "radians",
+                    singular : "radian",
+                    si : 1
+                },
+                deg: {
+                    plural: "degrees",
+                    singular : "degree",
+                    si : 0.017453
+                },
+                grad: {
+                    plural: "gradians",
+                    singular : "gradian",
+                    si : 0.015708
+                }
+            }
+        }
+    };
+            
+    //program constants
+    //font
+        var FONT_STYLE = "segoe ui";
+        var NORMAL_FONT_SIZE = "13pt";
+        var VARIABLE_FONT_SIZE = "28pt";
+    //derived from above
+        var normalinputFont = NORMAL_FONT_SIZE + " " + FONT_STYLE;
+        var varinputFont = VARIABLE_FONT_SIZE + " " + FONT_STYLE;
+    //theme
+        var THEME_COLOR = "#333333";
+    //objects
+        var varObjl;
+        var varObj2;
+        var selectedVariableObj;
+        var var1UnitsMenu;
+        var var1UnitsMenuButton;
+        var var2UnitsMenu;
+        var var2UnitsMenuButton;
+        var categoryButton;
+        var categoryMenu;
+        var background;
+    //other
+        var screen = "calc";
+        
+    //initialize variables
+        var category = "length";
+        var loadedConstants;
+        var var1Arr;
+        var var1;
+        var var1Unit;
+        var var2Arr;
+        var var2;
+        var var2Unit;
+        var selectedVariable;
+    
+    //set variables
+    function setVariables() {
+        loadedConstants = CONSTANTS[category].conversions;
+        var1Arr = [0];
+        var1Unit = CONSTANTS[category].defaults.var1;
+        var2Arr = [0];
+        var2Unit = CONSTANTS[category].defaults.var2;
+        selectedVariable = "var1";
+    }
+    
+    //start function
+    function start() {
+        println("Unit Converter - APCSP Create Task");
+        setVariables();
+        loadUI();
+        update();
+        mouseClickMethod(handleMouseClick);
+    }
+    
+    //handle mouse click
+    function handleMouseClick(e) {
+        //get element
+        var element = getElementAt(e.getX(), e.getY());
+        //handle mouse click for calculator screen
+        if (screen == "calc") {
+            //check if categoryMenu button is clicked
+            if (element.label == CONSTANTS[category].name) {
+                categoryMenu.add();
+                screen = "categoryMenu";
+                return;
+            }
+            //check if unitMenu buttons are clicked
+            if (element.label == "v" ) {
+                if (e.getY() < varObjl.getY()) {
+                    var1UnitsMenu.add();
+                    screen = "var1UnitMenu";
+                } else {
+                    var2UnitsMenu.add();
+                    screen = "var2UnitMenu";
+                }
+                return;
+            }
+            
+            //check if varObj's are selected
+            if (element == varObjl) {
+                if (selectedVariable == "var2") {
+                    var2Arr = [];
+                }
+                selectedVariable = "var1";
+            }
+            if (element == varObj2) {
+                if (selectedVariable == "var1") {
+                    var1Arr = [];
+                }
+                selectedVariable = "var2";
+            }
+        
+            //check if numpad is selected and add to values
+            var tempVar;
+            if (selectedVariable == "var1") {
+                if (element.label == "DEL") {
+                    var trash = var1Arr.pop();
+                } else if (element.label <= 9 || element.label == "." && var1Arr.indexOf(".") == -1) {
+                    var1Arr.push(element.label);
+                }
+            } else if (selectedVariable == "var2") {
+                if (element.label == "DEL") {
+                    var trash = var2Arr.pop();
+                } else if (element.label <= 9 || element.label == "." && var2Arr.index0f(".") == -1) {
+                    var2Arr.push(element.label);
+                }
+            }
+        }
+    
+        //handle mouse click for menus
+        if (screen == "categoryMenu") {
+            if (element.type == "Rectangle") {
+                return;
+            } else {
+                var counter = 0;
+                for (var name in CONSTANTS) {
+                    if (CONSTANTS[name].name == element.label) {
+                            var categories = Object.getOwnPropertyNames(CONSTANTS);
+                            category = categories[counter];
+                            removeAll();
+                            setVariables();
+                            loadUI();
+                            screen = "calc";
+                        }
+                        counter++;
+                    }
+                }
+            }
+        if (screen == "var1UnitMenu" || screen == "var2UnitMenu" ) {
+            if (element.type == "Rectangle") {
+                return;
+            } else {
+                var counter = 0;
+                for (var name in CONSTANTS[category].conversions) {
+                    if (CONSTANTS[category].conversions[name].singular == element.label) {
+                        var units = Object.getOwnPropertyNames(CONSTANTS[category].conversions);
+                        if (screen == "var1UnitMenu") {
+                            var1Unit = units[counter];
+                        } else if (screen == "var2UnitMenu") {
+                            var2Unit = units[counter];
+                        }
+                        removeAll();
+                        loadUI();
+                        screen = "calc";
+                    }
+                    counter++
+                }
+            }
+        }
+        //update
+        update();
+    }
+    
+    //buttons prototype
+    var Button = function (tag, label, x, y, width, height) {
+        this.tag = tag;
+        this.label = label;
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.add = function () {
+            //tile
+            var tile = new Rectangle(this.width, this.height);
+            tile.setPosition(this.x, this.y);
+            tile.label = label;
+            if (this.tag != "unit") {
+                tile.setColor("#444444");
+            } else {
+                tile.setColor("#252525");
+            }
+            add(tile);
+            //label
+            var labelObj = new Text(this.label, normalinputFont);
+            labelObj.setColor(Color.white);
+            var labelX = this.x + (this.width - labelObj.getWidth()) * 0.5;
+            var labelY = this.y - 2 + (this.height + labelObj.getHeight()) * 0.5;
+            labelObj.setPosition(labelX, labelY);
+            add(labelObj);
+        };
+    };
+    
+    //menu prototype
+    var Menu = function (tag, x, y, width, height) {
+        this.tag = tag;
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.add = function () {
+            //menuBackground
+            var menuBackground = new Rectangle(this.width, this.height);
+            menuBackground.setPosition(this.x, this.y);
+            menuBackground.setColor("#444444");
+            add(menuBackground);
+            //contents
+            if (this.tag == "unit") {
+                var index = 1;
+                for (var name in loadedConstants) {
+                    var labelObj = new Text("", normalinputFont);
+                    labelObj.setText(loadedConstants[name].singular);
+                    labelObj.setColor(Color.white);
+                        var labelX = this.x + 10;
+                        var labelY = this.y + ((labelObj.getHeight() * 1.1) * index);
+                        labelObj.setPosition(labelX, labelY);
+                    add(labelObj);
+                    index++;
+                }
+            } else if (this.tag == "category") {
+                var index = 1;
+                for (var name in CONSTANTS) {
+                    var labelObj = new Text("" , normalinputFont );
+                    labelObj.setText(CONSTANTS[name].name);
+                    labelObj.setColor(Color.white);
+                        var labelX = this.x + 10;
+                        var labelY = this.y + ((labelObj.getHeight() * 1.1) * index);
+                        labelObj.setPosition(labelX, labelY);
+                    add(labelObj);
+                    index++;
+                }
+            }
+        };
+        this.remove = function () {
+            remove(Text);
+        };
+    };
+    
+    //set up ui
+    function loadUI() {
+        //background
+        background = new Rectangle(getWidth(), getHeight());
+        background.setColor(Color.black);
+        add(background);
+        //header
+        var header = new Rectangle(getWidth(), 50);
+        header.setColor(THEME_COLOR);
+        header.setPosition(0, 0);
+        add(header);
+        //var1 & var2 & bg
+        varObjl = new Text(getTextToShow(var1, getUnitName(var1Unit, var1)), varinputFont);
+        varObjl.setColor(Color.white);
+        varObjl.setPosition(30, 130);
+        varObj2 = new Text(getTextToShow(var2, getUnitName(var2Unit, var2)), varinputFont);
+        varObj2.setColor(Color.white);
+        varObj2.setPosition(30, 230);
+        if (selectedVariable == "var1") {
+            selectedVariableObj = new Rectangle(getWidth() - 40, varObjl.getHeight() + 20);
+            selectedVariableObj.setPosition(varObjl.getX() - 10, varObjl.getY() - varObjl.getHeight() - 5);
+        } else if (selectedVariable == "var2") {
+            selectedVariableObj = new Rectangle(getWidth() - 40, varObj2.getHeight() + 20);
+            selectedVariableObj.setPosition(varObj2.getX() - 10, varObj2.getY() - varObjl.getHeight() - 5);
+        }
+        selectedVariableObj.setColor("#444444");
+        //category button
+        categoryButton = new Button("menu", CONSTANTS[category].name, 5, 5, getWidth() - 10, 40);
+        //units menu nutton
+        var1UnitsMenuButton = new Button("unit", "v",
+            getWidth() - 70, varObjl.getY() - ((varObjl.getHeight() + 40) / 2.2), 40, 40);
+        var2UnitsMenuButton = new Button("unit", "v",
+            getWidth() - 70, varObj2.getY() - ((varObj2.getHeight() + 40) / 2.2), 40, 40);
+        //categories menu
+        var1UnitsMenu = new Menu("unit", 0, 0, getWidth(), getHeight());
+        var2UnitsMenu = new Menu("unit", 0, 0, getWidth(), getHeight());
+        categoryMenu = new Menu("category", 0, 0, getWidth(), getHeight());
+        add(selectedVariableObj);
+        add(varObjl);
+        add(varObj2);
+        categoryButton.add();
+        var1UnitsMenuButton.add();
+        var2UnitsMenuButton.add();
+    
+        //numberpad
+            //background
+            var numPadBackground = new Rectangle(getWidth(), getHeight() * 0.45);
+            numPadBackground.setColor(THEME_COLOR);
+            numPadBackground.setPosition(0, getHeight() - numPadBackground.getHeight());
+            add(numPadBackground);
+            //buttons
+            var buttonSpacing = numPadBackground.getHeight() * 0.04;
+            var buttonWidth = (getWidth() * 0.25);
+            var buttonHeight = (numPadBackground.getHeight() * 0.2);
+            var buttonXShift = (getWidth() - ((3 * buttonWidth) + (2 * buttonSpacing))) * 0.5;
+            for (var i = 0; i < 4; i++) {
+                for (var j = 0; j < 3; j++) {
+                    var buttonlabel = getNumPadLabel((3 * i) + j + 1);
+                    var buttonX = buttonXShift + (buttonWidth + buttonSpacing) * j;
+                    var buttonY = getHeight() - ((buttonHeight + buttonSpacing) * (i + 1))
+                    var button = new Button
+                        ("numPad", buttonlabel, buttonX, buttonY, buttonWidth, buttonHeight);
+                    if (selectedVariable == "var1" && var1Arr.includes(".") && buttonlabel == (".")) {
+    
+                    } else if (selectedVariable == "var2" && var2Arr.includes(".") && buttonlabel == (".")) {
+    
+                    } else {
+                        button.add();
+                    }
+                }
+            }
+    }
+            
+    //button label getter
+    function getNumPadLabel(index) {
+        if (index > 3) {
+            return index - 3;
+        } else if (index == 1) {
+            return "DEL";
+        } else if (index == 2) {
+            return 0;
+        } else if (index == 3) {
+            return ".";
+        }
+    }
+    //helper function to get unit name
+    function getUnitName(unit, value) {
+        if (parseFloat(value) == 1) {
+            return loadedConstants[unit].singular;
+        } else {
+            return loadedConstants[unit].plural;
+        }
+    }
+    //helper function to return string with value and unit
+    function getTextToShow(value, unit) {
+        var roundedValue = Math.round(value * 1000) / 1000;
+        return roundedValue + " " + unit;
+    }
+    
+    //helper function to get a string from an array
+    function fromArrToNumber(array) {
+        var result = "";
+        for (var i = 0; i < array.length; i++) {
+            result += array[i];
+        }
+        return result;
+    }
+    
+    //update variables and convert
+    function update() {
+        //get new variable from array
+        var1 = fromArrToNumber(var1Arr);
+        var2 = fromArrToNumber(var2Arr);
+        //input and output variables
+        if (selectedVariable == "var1") {
+            var2 = convert(var1);
+        } else if (selectedVariable == "var2") {
+            var1 = convert(var2);
+        }
+        if (category == "Length") {
+            loadedConstants = CONSTANTS.length.conversions;
+        }
+        //update screen
+        varObjl.setText(getTextToShow(var1, getUnitName(var1Unit, var1)));
+        varObj2.setText(getTextToShow(var2, getUnitName(var2Unit, var2)));
+        loadUI();
+    }
+    
+    //function that calculates the result
+    function convert(input) {
+        if (selectedVariable == "var1") {
+            var inputUnit = var1Unit;
+            var outputUnit = var2Unit;
+        } else if (selectedVariable == "var2") {
+            var inputUnit = var2Unit;
+            var outputUnit = var1Unit;
+        }
+        var convertedToSI = input * loadedConstants[inputUnit].si;
+        var result = convertedToSI / loadedConstants[outputUnit].si;
+        return result;
+    }
+    
+    
+        if (typeof start === 'function') {
+            start();
+        }
+    };
+    </script>
+    
+    </body>
+    </html>
+    
